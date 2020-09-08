@@ -160,21 +160,5 @@ class Userinfo(commands.Cog, name='정보'):
         if isinstance(error, discord.ext.commands.CommandOnCooldown):
             await ctx.message.add_reaction('<:2s:752150489348571197>')
 
-    
-    @commands.command(name="봇정보", aliases=['크레딧'])
-    @commands.cooldown(1, 2, commands.BucketType.user)
-    async def botinfooo(self, ctx):
-        embed = discord.Embed(title=f"{self.bot.user.name}", colour=discord.Colour.green())
-        embed.add_field(name="개발자", value=self.bot.get_user(384227121267998722), inline=False)
-        embed.add_field(name="만들어진 날짜", value="2020-06-19 01:20:31 AM", inline=False)
-        embed.add_field(name="사용하는 서버 수 / 유저", value=f"{len(self.bot.guilds)}개의 서버 / {len(self.bot.users)}명의 유저", inline=False)
-        embed.add_field(name="참고및 쓰고 있는 오픈소스 : ", value="[링크1](https://github.com/Team-EG/j-bot-old)|제작자: eunwoo1104님-게임,경고 \n[링크2](https://github.com/J-hoplin1/League-Of-Legend-Search-Bot)|제작자: J-hoplin1님-롤 \n[링크3](https://github.com/J-hoplin1/PUBG-player-search-bot/blob/6676975cef8d70da5ffc6fac657f9f5911f0b654/PUBGSearchbot.py)|제작자: J-hoplin1님-배그", inline=False)
-        embed.set_footer(text=ctx.author.name + str(datetime.datetime.utcnow()), icon_url=ctx.author.avatar_url)
-        await ctx.send(embed=embed)
-    @botinfooo.error
-    async def botinfooo_error(self, ctx, error):
-        if isinstance(error, discord.ext.commands.CommandOnCooldown):
-            await ctx.message.add_reaction('<:2s:752150489348571197>')
-
 def setup(bot):
     bot.add_cog(Userinfo(bot))
