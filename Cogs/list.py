@@ -121,7 +121,7 @@ class listt(commands.Cog): #2
                 await ctx.send(list2)
                 await ctx.send(list3)
                 await ctx.send(f'{ctx.author.mention}님이 시켰어요!!')
-            elif amount >= 1200:
+            elif amount >= 2400:
                 await ctx.channel.send("도배... 하실려고요?")
             else:
                 await ctx.send("1이상의 **숫자**만 입력해주세요")
