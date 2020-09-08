@@ -116,7 +116,7 @@ class calculate(commands.Cog, name='계산'):
     @commands.command(name="계산기", aliases=['계산'])
     @commands.cooldown(1, 2, commands.BucketType.user)
     async def calcula(self, ctx, *, 식):
-        app_id="YKTGG4-WKGTEH8VXV"
+        app_id="app_id"
         wolfi=wolframalpha.Client(app_id)
         res = wolfi.query(식)
         await ctx.send(next(res.results).text)
