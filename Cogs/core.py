@@ -27,15 +27,6 @@ class Core(commands.Cog, name='부가기능'): #2
     def __init__(self, bot): #3
         self.bot = bot #4
 
-    @commands.command(aliases=['프린트', '출력'], help="정상적동하는지 알려줍니다.")
-    @commands.cooldown(1, 2, commands.BucketType.user)
-    async def printf(self, ctx):
-        await ctx.channel.send("로라스에 의해 출력됨.")
-    @printf.error
-    async def printf_error(self, ctx, error):
-        if isinstance(error, discord.ext.commands.CommandOnCooldown):
-            await ctx.message.add_reaction('<:2s:752150489348571197>')
-
     @commands.command(name="따라해", aliases=['따라하기'], help="따라합니다.")
     @commands.cooldown(1, 2, commands.BucketType.user)
     async def repeat(self, ctx, *, content):
@@ -52,47 +43,6 @@ class Core(commands.Cog, name='부가기능'): #2
         await ctx.send(embed=embed)
     @ping.error
     async def ping_error(self, ctx, error):
-        if isinstance(error, discord.ext.commands.CommandOnCooldown):
-            await ctx.message.add_reaction('<:2s:752150489348571197>')
-    
-    @commands.command(name="건의")
-    @commands.cooldown(1, 2, commands.BucketType.user)
-    async def dsdsadadafasf(self,ctx, *, massage):
-        cha = self.bot.get_channel(744449976746246206)
-        embed = discord.Embed(title=f"{ctx.author.name} // {ctx.author.id}", description= "건의내용\n"+massage,colour=discord.Colour.green())
-        embed.set_footer(text=f"{ctx.author} 시간: "+str(datetime.datetime.utcnow()), icon_url=ctx.author.avatar_url)
-        await cha.send(embed=embed)
-        await ctx.send("성공적으로 보내졌습니다.")
-    @dsdsadadafasf.error
-    async def dsdsadadafasf_error(self, ctx, error):
-        if isinstance(error, discord.ext.commands.CommandOnCooldown):
-            await ctx.message.add_reaction('<:2s:752150489348571197>')
-
-    @commands.command(name="문의")
-    @commands.cooldown(1, 2, commands.BucketType.user)
-    async def sddsds(self,ctx, *, massage):
-        cha = self.bot.get_channel(744449976746246206)
-        embed = discord.Embed(title=f"{ctx.author.name} // {ctx.author.id}", description= "문의내용\n"+massage,colour=discord.Colour.green())
-        embed.set_footer(text=f"{ctx.author} 시간: "+str(datetime.datetime.utcnow()), icon_url=ctx.author.avatar_url)
-        await cha.send(embed=embed)
-        await ctx.send("성공적으로 보내졌습니다.")
-    @sddsds.error
-    async def sddsds_error(self, ctx, error):
-        if isinstance(error, discord.ext.commands.CommandOnCooldown):
-            await ctx.message.add_reaction('<:2s:752150489348571197>')
-
-    @commands.command(name="답변")
-    async def adasdasdafasfcsad(self, ctx, user:int, *, response):
-        if ctx.author.id == 384227121267998722:
-            idds = self.bot.get_user(user)
-            embed = discord.Embed(title=f"답변 내용", description= response, colour=discord.Colour.green())
-            embed.set_footer(text=f"{ctx.author} 시간: "+str(datetime.datetime.utcnow()), icon_url=ctx.author.avatar_url)
-            await idds.send(embed=embed)
-            await ctx.send("성공적으로 보내졌습니다.")
-        else:
-            await ctx.send("이 명령어를 쓰려면 최소 Bot Developer 권한이 필요합니다.")
-    @adasdasdafasfcsad.error
-    async def adasdasdafasfcsad_error(self, ctx, error):
         if isinstance(error, discord.ext.commands.CommandOnCooldown):
             await ctx.message.add_reaction('<:2s:752150489348571197>')
 
