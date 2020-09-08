@@ -309,11 +309,6 @@ class search(commands.Cog):
         localcase = output2['korea']['newCcase']
         foreigncase = output2['korea']['newFcase']
 
-        req1 = Request("http://freeaiapp.kro.kr/api/Corona")
-        webpage2 = urlopen(req1).read()
-        output1 = json.loads(webpage2)
-        todayteating = output1['TodayRecover']
-
         todayrecovering = int(todaycase) - int(todayrecover)
 
         embed = discord.Embed(title="**코로나 확진자수**", color=0x00ff56)
@@ -323,7 +318,7 @@ class search(commands.Cog):
         embed.add_field(name="**치료중**", value=f"{Quarantine}명(+{todayrecovering})")
         embed.add_field(name="**사망자**", value=f"{death}명(+{todaydeath}명)\n치사율:{deathrate}%")
         embed.add_field(name="**완치자**", value=f"{recover}명(+{todayrecover}명)\n완치율: {recoveryrate}%")
-        embed.add_field(name="**검사자**", value=f"{testing}명(+{todayteating}명)")
+        embed.add_field(name="**검사자**", value=f"{testing}명"
         embed.add_field(name="**누적 확진률**", value=f"{caserate}%")
         embed.add_field(name="**치사율**", value=f"{deathrate}%")
 
@@ -347,88 +342,6 @@ class search(commands.Cog):
     async def corona_error(self, ctx, error):
         if isinstance(error, discord.ext.commands.CommandOnCooldown):
             await ctx.message.add_reaction('<:2s:752150489348571197>')
-
-    # @commands.command(aliases=['위키', '나무']) #잘못된코드임
-    # @commands.cooldown(1, 2, commands.BucketType.user)
-    # async def namu(self, ctx, *, text):
-    #     encText = urllib.parse.quote(text)
-    #     url = "https://mir.pe/wiki/" + encText
-
-    #     if text == "$랜덤":
-    #         url = "https://mir.pe/random"
-
-    #     async with aiohttp.ClientSession() as session:
-    #         async with session.get(url) as resp:
-
-    #             if resp.status == 200:
-    #                 soup = BeautifulSoup(await resp.text(), 'lxml')
-    #                 CONTENT = await content(soup)
-    #                 embed = discord.Embed(title="나무위키를 파싱한 결과입니다")
-    #                 TITlE = await title(soup)
-
-    #                 for contents in CONTENT:
-    #                     contents = remove_line(contents)
-
-    #                     url = "https://namu.wiki/w/" + urllib.parse.quote(TITlE)
-
-    #                     embed.add_field(name=TITlE, value=contents[0:900] + "...[더보기](<%s>)" % url,
-    #                                     inline=False)
-    #                 embed.set_footer(text=config.bot_name + "  " + config.bot_version)
-    #                 await ctx.send(embed=embed)
-    #             else:
-    #                 embed = discord.Embed(title="오류 발생", description=resp.status)
-    #                 embed.set_footer(text=config.bot_name + "  " + config.bot_version)
-    #                 await ctx.send(embed=embed)
-
-    @commands.command(name="영화순위", pass_context=True)
-    async def movie(self, ctx):
-        """영화를 1~20순위로 나눈 영화순위를 보여줍니다."""
-        i1 = 0  # 랭킹 string값
-        embed = discord.Embed(title="영화순위", description="영화순위입니다.", color=0xb8bb6a)
-        req = Request('http://ticket2.movie.daum.net/movie/movieranklist.aspx', headers={'User-Agent': 'Mozilla/5.0'})
-        bsObj = BeautifulSoup(urlopen(req), "html.parser")
-        moviechartBase = bsObj.find('div', {'class': 'main_detail'})
-        moviechart1 = moviechartBase.find('ul', {'class': 'list_boxthumb'})
-        moviechart2 = moviechart1.find_all('li')
-        for i in range(10):
-            i1 = i1 + 1
-            stri1 = str(i1)  # i1은 영화랭킹을 나타내는데 사용됩니다
-            moviechartLi1 = moviechart2[i]  # ------------------------- 1등랭킹 영화---------------------------
-            moviechartLi1Div = moviechartLi1.find('div', {'class': 'desc_boxthumb'})  # 영화박스 나타내는 Div
-            moviechartLi1MovieName1 = moviechartLi1Div.find('strong', {'class': 'tit_join'})
-            moviechartLi1MovieName = moviechartLi1MovieName1.text.strip()  # 영화 제목
-            moviechartLi1Ratting1 = moviechartLi1Div.find('div', {'class': 'raking_grade'})
-            moviechartLi1Ratting2 = moviechartLi1Ratting1.find('em', {'class': 'emph_grade'})
-            moviechartLi1Ratting = moviechartLi1Ratting2.text.strip()  # 영화 평점
-            moviechartLi1openDay1 = moviechartLi1Div.find('dl', {'class': 'list_state'})
-            moviechartLi1openDay2 = moviechartLi1openDay1.find_all('dd')  # 개봉날짜, 예매율 두개포함한 dd임
-            moviechartLi1openDay3 = moviechartLi1openDay2[0]
-            moviechartLi1Yerating1 = moviechartLi1openDay2[1]
-            moviechartLi1openDay = moviechartLi1openDay3.text.strip()  # 개봉날짜
-            moviechartLi1Yerating = moviechartLi1Yerating1.text.strip()  # 예매율 ,랭킹변동
-            embed.add_field(name='---------------랭킹' + stri1 + '위---------------',value='\n영화제목 : ' + moviechartLi1MovieName + '\n영화평점 : ' + moviechartLi1Ratting + '점' + '\n개봉날짜 : ' + moviechartLi1openDay + '\n예매율,랭킹변동 : ' + moviechartLi1Yerating, inline=False)  # 영화랭킹
-            embed.timestamp = ctx.message.created_at
-        await ctx.send(embed=embed)
-
-    @commands.command(name="트위치",aliases=['twitch'])
-    async def twitch(self, ctx, game, *keys, streams=[]):
-        headers = {
-            'Accept': 'application/vnd.twitchtv.v5+json',
-            'Client-ID': environ['h8cz4p9bim8geqfj9jz9drbpq1sm7c'],
-            'Authorization': f"Bearer {environ['9v1pr6e0ksoz2q1vkurxxfd2vpc2q3']}",
-        }
-        category = get(f'https://api.twitch.tv/kraken/search/games?query={game}', headers=headers).json()['games'][0]
-        embed = discord.Embed(title=f":desktop: Streams ({category['name']}):", color=0x3498db)
-        response = get(f"https://api.twitch.tv/helix/streams?game_id={category['_id']}", headers=headers).json()
-        for stream in response['data']:
-            if keys:
-                for key in keys:
-                    if key.lower() in stream['title'].lower() and not stream in streams:
-                        streams.append(stream)
-                        embed.add_field(name=f"{stream['user_name']}", value=f"[{stream['title']}](https://twitch.tv/{stream['user_name']})")
-            else:
-                embed.add_field(name=f"{stream['user_name']}", value=f"[{stream['title']}](https://twitch.tv/{stream['user_name']})")
-        await ctx.send(embed=embed)
     
 def setup(bot):
     bot.add_cog(search(bot))
