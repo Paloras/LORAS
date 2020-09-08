@@ -53,12 +53,6 @@ class Events(commands.Cog):
     async def on_message(self, message):    
         if message.author.bot:
             return None
-
-        if message.content.startswith("팔") or message.content.startswith("vkf"):
-            cha = self.bot.get_channel(745091205641011290)
-            embed = discord.Embed(title= '말한 사람 이름 : ' + message.author.name + ", id : " + str(message.author.id), description= '말한 내용 : ' + message.content+"\n"+'말한 채널의 id : ' + str(message.channel.id),colour=discord.Colour.green(),timestamp=message.created_at)#+"\n"
-            embed.set_footer(text=f"{message.author}", icon_url=message.author.avatar_url)# 시간 :"+ datetime.datetime.now()
-            await cha.send(embed=embed)
         
         if "죽음" in message.content or "사망" in message.content:
             await message.add_reaction('❎')
@@ -95,43 +89,10 @@ class Events(commands.Cog):
             else:
                 await message.channel.send("**오답입니다.**")
 
-        
-        # if message.content.startswith("팔컴파일"):
-        #     if message.author.id == 384227121267998722:
-        #         try:
-        #             cmd=message.content[5:]
-        #             fn_name = "_eval_expr"
-        #             cmd = cmd.strip("` ")
-        #             # add a layer of indentation
-        #             cmd = "\n".join(f"    {i}" for i in cmd.splitlines())
-        #             # wrap in async def body
-        #             body = f"async def {fn_name}():\n{cmd}"
-        #             parsed = ast.parse(body)
-        #             body = parsed.body[0].body
-        #             insert_returns(body)
-        #             env = {
-        #                 'client': client,
-        #                 'discord': discord,
-        #                 'message': message,
-        #                 '__import__': __import__
-        #             }
-        #             exec(compile(parsed, filename="<ast>", mode="exec"), env)
-        #             result = (await eval(f"{fn_name}()", env))
-        #             embed=discord.Embed(title="EVAL", colour=discord.Colour.green())
-        #             embed.add_field(name="Input (들어가는 내용)", value=f"{cmd}",inline=False)
-        #             embed.add_field(name="Output (나오는 내용)", value=f"{result}",inline=False)
-        #             embed.add_field(name="Type (타입)",value=f"{type(result)}",inline=False)
-        #             embed.add_field(name="Latency (지연시간)",value=str((datetime.datetime.now()-message.created_at)*1000).split(":")[2],inline=False)
-        #             await message.channel.send(embed=embed)
-        #         except Exception as e:
-        #             await message.channel.send(e)
-        #     else:
-        #         await message.channel.send('이 명령어를 쓰려면 최소 Bot Developer 권한이 필요합니다.')
-
         if message.content.startswith("팔공지"):
             if message.author.id == 384227121267998722:
                 if str(message.content[4:]) == None:
-                    await message.channel.send("팔공지 제목//내용")
+                    await message.channel.send("팔공지 내용")
                 msg = message.content[4:]
                 oksv = 0
                 embed = discord.Embed(  
