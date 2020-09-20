@@ -8,6 +8,7 @@ import os
 import shutil
 from discord.ext import commands
 import asyncio
+from config import OWNERS
 
 class game(commands.Cog):
 
@@ -15,58 +16,22 @@ class game(commands.Cog):
         """Initialisation bot"""
         self.bot = bot
 
-    # @commands.command(aliases=['운세'])
-    # @commands.cooldown(1, 2, commands.BucketType.user)
-    # async def _8ball(self, ctx, *, question):
-    #     """8-ball game"""
-    #     responses = [ "확실하다 ",
-    #                  "정말입니다 ",
-    #                  "의심의 여지없이",
-    #                  "예 — 확실히",
-    #                  "당신은 그것에 의지 할 수 있습니다 ",
-    #                  "알다시피, 네 ",
-    #                  "아마도 ",
-    #                  "전망 좋은 ",
-    #                  "표지판 예",
-    #                  "예 ",
-    #                  "흐리게 답하기, 다시 시도하십시오",
-    #                  "나중에 다시 질문",
-    #                  "더 이상 말하지 말라",
-    #                  "지금 예측할 수 없습니다",
-    #                  "집중하고 다시 묻습니다",
-    #                  "믿지 마라",
-    #                  "제 답장이 없습니다",
-    #                  "내 응답은 아니오입니다",
-    #                  "전망이 좋지 않다",
-    #                  "아주 의심 스럽다"]
-    #     await ctx.send(f'질문: {question}\n답: {random.choice(responses)}')
-
-    @commands.command(aliases=['뭔겜할까', '무슨게임','뭔겜'])
-    @commands.cooldown(1, 2, commands.BucketType.user)
-    async def WhatByGame(self, ctx):
-        """Function for choice game"""
-        responses = ["포트나이트", "카운터 스트라이크(카스)", "GTA5", "배틀그라운드(배그)", "러스트", "RDR2", "어쌔신크리드", "콜 오브 듀티", "리그 오브 레전드(롤)", "마인크래프트"]
-        await ctx.send(f'{random.choice(responses)}을(를) 플레이해!')
-    @WhatByGame.error
-    async def WhatByGame_error(self, ctx, error):
-        if isinstance(error, discord.ext.commands.CommandOnCooldown):
-            await ctx.message.add_reaction('<:2s:752150489348571197>')
-
-    @commands.command(aliases=['랜덤게임', '랜덤'])
-    @commands.cooldown(1, 2, commands.BucketType.user)
-    async def RandomGame(self, ctx, *, games):
-        """Random choice game"""
-        await ctx.send(f'{random.choice(games.split())}')
-    @RandomGame.error
-    async def RandomGame_error(self, ctx, error):
-        if isinstance(error, discord.ext.commands.CommandOnCooldown):
-            await ctx.message.add_reaction('<:2s:752150489348571197>')
-    
-    @commands.command(name="동전")
+    @commands.command(name="동전", aliases=['ehdwjs','coin','채ㅑㅜ'])
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def coin(self, ctx):
         randomlist = ["앞면", "뒷면", "앞면", "뒷면", "앞면", "뒷면", "앞면", "뒷면", "앞면", "뒷면", "앞면", "뒷면", "앞면", "뒷면", "앞면", "뒷면", "앞면", "뒷면", "앞면", "뒷면", "앞면", "뒷면", "앞면", "뒷면", "앞면", "뒷면", "앞면", "뒷면", "앞면", "뒷면", "앞면", "뒷면", "앞면", "뒷면", "앞면", "뒷면", "앞면", "뒷면", "옆면?"]
         ran = random.choice(randomlist)
+        guild_id = str(ctx.guild.id)
+        author_id = str(ctx.author.id)
+        with open(f'game/money.json', 'r') as f:
+            money = json.load(f)
+        if 3000 > money[author_id]['money']:
+            await ctx.send('돈이 부족합니다.')
+            return
+        money[author_id]['money'] -= 3000
+        with open(f'game/money.json', 'w') as s:
+            json.dump(money, s, indent=4)
+        await ctx.send(f'동전을 던지고 버렸다. -3000원 (현재잔액:{money[author_id]["money"]})')
         if ran == "옆면?":
             author_id = str(ctx.author.id)
             with open(f'game/money.json', 'r') as f:
@@ -89,6 +54,10 @@ class game(commands.Cog):
                 embed.add_field(name="잔액", value=f'{money[author_id]["money"]}원', inline=False)
 
                 await ctx.send(embed=embed)
+                cha = self.bot.get_channel(11111111111111)
+
+                embed2 = discord.Embed(title='이스터에그 발*견', description=f'태그번호`{ctx.author.discriminator}`님이 이스터에그를 발견하셨습니다.', color=ctx.author.color)
+                await cha.send(embed=embed2)
 
             except KeyError:
                 got_money = 500000
@@ -99,7 +68,12 @@ class game(commands.Cog):
                 money[author_id]['money'] = got_money
                 with open(f'game/money.json', 'w') as s:
                     json.dump(money, s, indent=4)
+                await ctx.send(f'이스터에그를 찾아서 포상금이 주어집니다. ({got_money}원)')
                 await ctx.send(f'계정이 없어서 계정을 생성하였습니다. 통장 잔고는 {got_money}원 입니다.')
+                cha = self.bot.get_channel(11111111111111)
+
+                embed2 = discord.Embed(title='이스터에그 발*견', description=f'태그번호`{ctx.author.discriminator}`님이 이스터에그를 발견하셨습니다.', color=ctx.author.color)
+                await cha.send(embed=embed2)
             return
         else:
             embed = discord.Embed(title="결과", description="어이쿠 실수로 던졌다~ "+ran, color=0xb8bb6a)
@@ -107,21 +81,10 @@ class game(commands.Cog):
     @coin.error
     async def coin_error(self, ctx, error):
         if isinstance(error, discord.ext.commands.CommandOnCooldown):
-            await ctx.message.add_reaction('<:5s:752150489390645269>')
+            await ctx.message.add_reaction('<:.5s:752150489390645269>')
 
-    @commands.command(name="주사위")
-    @commands.cooldown(1, 2, commands.BucketType.user)
-    async def dice(self, ctx):
-        random = ["1", "2", "3", "4", "5", "6"]
-        ran = random.randint(random)
-        embed = discord.Embed(title="결과", description=ran, color=0xb8bb6a)
-        await ctx.send(embed=embed)
-    @dice.error
-    async def dice_error(self, ctx, error):
-        if isinstance(error, discord.ext.commands.CommandOnCooldown):
-            await ctx.message.add_reaction('<:2s:752150489348571197>')
 
-    @commands.command(name="계정생성")
+    @commands.command(name="계정생성",aliases=['rPwjdtodtjd'])
     @commands.cooldown(1, 600, commands.BucketType.user)
     async def createaccount(self, ctx):
         guild_id = str(ctx.guild.id)
@@ -130,28 +93,74 @@ class game(commands.Cog):
             money = json.load(f)
         money[author_id] = {}
         money[author_id]['money'] = 0
-        money[author_id]['username'] = str(ctx.author)
+        money[author_id]['work'] = 0
         with open(f'game/money.json', 'w') as s:
             json.dump(money, s, indent=4)
         await ctx.send('계정이 생성되었습니다. 통장 잔고는 0원 입니다.')
     @createaccount.error
     async def createaccount_error(self, ctx, error):
         if isinstance(error, discord.ext.commands.CommandOnCooldown):
-            await ctx.message.add_reaction('<:10min:752150489096781966>')
+            await ctx.message.add_reaction('<.10min:752150489096781966>')
 
-    @commands.command(name="일", aliases=['일하기'])
+    @commands.command(name="일", aliases=['일하기','dlf','dlfgkrl'])
     @commands.cooldown(1, 3, commands.BucketType.user)
     async def work(self, ctx):
-        guild_id = str(ctx.guild.id)
         author_id = str(ctx.author.id)
         with open(f'game/money.json', 'r') as f:
             money = json.load(f)
         try:
-            got_money = random.randint(1000, 10000)
-            money[author_id]['money'] += got_money
-            with open(f'game/money.json', 'w') as s:
-                json.dump(money, s, indent=4)
-            await ctx.send(f'{got_money}원을 일하여 얻었다. (현재잔액:{money[author_id]["money"]})')
+            firstlose = random.randint(1, 5000)
+            second = random.randint(1, 15000)
+            fff = firstlose - second
+            ff = second - firstlose
+
+            got_money = random.randint(1, 20000)
+            lose_money = random.randint(1, 17000)
+            mmm = got_money - lose_money
+            mm = lose_money - got_money
+            if money[author_id]['money'] <= 100000:
+                money[author_id]['money'] += firstlose
+                money[author_id]['work'] += 1
+                with open(f'game/money.json', 'w') as s:
+                    json.dump(money, s, indent=4)
+                await ctx.send(f'{firstlose}원을 일하여 얻었다. ({ctx.author.name}#{ctx.author.discriminator}님의 현재잔액:{money[author_id]["money"]})')
+            elif money[author_id]['money'] <= 500000 and money[author_id]['money'] > 100000:
+                if fff > 0:
+                    money[author_id]['money'] -= fff
+                    money[author_id]['work'] += 1
+                    with open(f'game/money.json', 'w') as s:
+                        json.dump(money, s, indent=4)
+                    await ctx.send(f'일하다가 큰부상을 입어 {fff}원을 병원비로 지출하게되었다. ({ctx.author.name}#{ctx.author.discriminator}님의 현재잔액:{money[author_id]["money"]})')
+                elif ff > 0:
+                    money[author_id]['money'] += ff
+                    money[author_id]['work'] += 1
+                    with open(f'game/money.json', 'w') as s:
+                        json.dump(money, s, indent=4)
+                    await ctx.send(f'{ff}원을 일하여 얻었다. ({ctx.author.name}#{ctx.author.discriminator}님의 현재잔액:{money[author_id]["money"]})')
+                elif ff == 0 and fff == 0:
+                    money[author_id]['work'] += 1
+                    with open(f'game/money.json', 'w') as s:
+                        json.dump(money, s, indent=4)
+                    await ctx.send(f"{ctx.author.name}#{ctx.author.discriminator}님은 열심히 일을 하였지만 사고로 인해 돈이 나가서 번돈이 없다")
+                
+            elif money[author_id]['money'] > 500000:
+                if mm > 0:
+                    money[author_id]['money'] -= mm
+                    money[author_id]['work'] += 1
+                    with open(f'game/money.json', 'w') as s:
+                        json.dump(money, s, indent=4)
+                    await ctx.send(f'일하다가 큰부상을 입어 {mm}원을 병원비로 지출하게되었다. ({ctx.author.name}#{ctx.author.discriminator}님의 현재잔액:{money[author_id]["money"]})')
+                elif mmm > 0:
+                    money[author_id]['money'] += mmm
+                    money[author_id]['work'] += 1
+                    with open(f'game/money.json', 'w') as s:
+                        json.dump(money, s, indent=4)
+                    await ctx.send(f'{mmm}원을 일하여 얻었다. ({ctx.author.name}#{ctx.author.discriminator}님의 현재잔액:{money[author_id]["money"]})')
+                elif mm == 0 and mmm == 0:
+                    money[author_id]['work'] += 1
+                    with open(f'game/money.json', 'w') as s:
+                        json.dump(money, s, indent=4)
+                    await ctx.send(f"{ctx.author.name}#{ctx.author.discriminator}님은 열심히 일을 하였지만 사고로 인해 돈이 나가서 번돈이 없다")
         except KeyError:
             guild_id = str(ctx.guild.id)
             author_id = str(ctx.author.id)
@@ -159,9 +168,10 @@ class game(commands.Cog):
                 money = json.load(f)
             money[author_id] = {}
             money[author_id]['money'] = 0
+            money[author_id]['work'] = 0
             with open(f'game/money.json', 'w') as s:
                 json.dump(money, s, indent=4)
-            await ctx.send('계정이 없어서 계정을 생성하였습니다. 통장 잔고는 0원 입니다.')
+            await ctx.send(f'{ctx.author.name}#{ctx.author.discriminator}님의 계정이 없어서 계정을 생성하였습니다. 통장 잔고는 0원 입니다.')
             return
     @work.error
     async def work_error(self, ctx, error):
@@ -169,7 +179,7 @@ class game(commands.Cog):
             await ctx.message.add_reaction('<:3s:752150489344507955>')
 
 
-    @commands.command(name="도박")
+    @commands.command(name="도박",aliases=['gamble','ehqkr'])
     @commands.cooldown(1, 5, commands.BucketType.user)
     async def gamble(self, ctx, 판돈:int):
         author_id = str(ctx.author.id)
@@ -183,20 +193,33 @@ class game(commands.Cog):
                 await ctx.send('돈이 부족합니다.')
                 return
             money[author_id]['money'] -= 판돈
-            result = random.randint(1, 100)
-            if result > 70:
-                await ctx.send('도박에 성공했습니다. 2배의 돈을 벌었습니다.')
+            result = random.randint(1, 10000)
+            if result > 7000:
+                await ctx.send(f'{ctx.author.name}#{ctx.author.discriminator}님의 도박에 성공했습니다. 2배의 돈을 벌었습니다.')
                 money[author_id]['money'] += 판돈 * 2
-            elif result <= 70 and result >10:
-                await ctx.send('배팅에 실패했습니다. 돈을 잃었습니다.')
-            elif result <= 10 and result > 2:
-                await ctx.send('도박에 성공했습니다. 3배의 돈을 벌었습니다.')
-                money[author_id]['money'] += 판돈 * 3
-            elif result <= 2:
-                await ctx.send('원금은 회수하셨네요... 배팅금만큼의 돈을 얻었습니다.')
+            elif result <= 7000 and result >1000:
+                await ctx.send(f'{ctx.author.name}#{ctx.author.discriminator}님의 배팅에 실패했습니다. 돈을 잃었습니다.')
+            elif result <= 1000 and result > 80:
+                await ctx.send(f'{ctx.author.name}#{ctx.author.discriminator}님의 원금은 회수하셨네요... 배팅금만큼의 돈을 얻었습니다.')
                 money[author_id]['money'] += 판돈
+            elif result <= 80 and result > 10:
+                await ctx.send(f'{ctx.author.name}#{ctx.author.discriminator}님의 도박에 성공했습니다. 3배의 돈을 벌었습니다.')
+                money[author_id]['money'] += 판돈 * 3
+            elif result <= 10 and result > 2:
+                await ctx.send(f'{ctx.author.name}#{ctx.author.discriminator}님의 배팅에 실패했습니다. 돈을 잃었습니다.')
+            elif result <= 2:
+                await ctx.send(f'{ctx.author.name}#{ctx.author.discriminator}님의 도박에 성공했습니다. 5배의 돈을 벌었습니다.')
+                money[author_id]['money'] += 판돈*5+100000
+                cha = self.bot.get_channel(11111111111111)
+
+                embed1 = discord.Embed(title='도박!', description=f'태그번호`{ctx.author.discriminator}`님이 이스터에그를 발견하셨습니다.', color=ctx.author.color)
+                await cha.send(embed=embed1)
+
+                embed2 = discord.Embed(title='이스터에그 발*견', description=f'당신은 이스터에그를 발견하여 사례금 10만원을 드립니다.', color=ctx.author.color)
+                embed2.set_thumbnail(url=ctx.author.avatar_url)
+                await ctx.send(embed=embed2)
             else:
-                await ctx.send('배팅에 실패했습니다. 돈을 잃었습니다.')
+                await ctx.send(f'{ctx.author.name}#{ctx.author.discriminator}님의 배팅에 실패했습니다. 돈을 잃었습니다.')
             with open(f'game/money.json', 'w') as s:
                 json.dump(money, s, indent=4)
         except KeyError:
@@ -206,6 +229,7 @@ class game(commands.Cog):
                 money = json.load(f)
             money[author_id] = {}
             money[author_id]['money'] = 0
+            money[author_id]['work'] = 0
             with open(f'game/money.json', 'w') as s:
                 json.dump(money, s, indent=4)
             await ctx.send('계정이 없어서 계정을 생성하였습니다. 통장 잔고는 0원 입니다.')
@@ -215,7 +239,7 @@ class game(commands.Cog):
         if isinstance(error, discord.ext.commands.CommandOnCooldown):
             await ctx.message.add_reaction('<:5s:752150489390645269>')
             
-    @commands.command(name="통장")
+    @commands.command(name="통장",aliases=['xhdwkd','account','ㅁㅊ채ㅕㅜㅅ'])
     @commands.cooldown(1, 15, commands.BucketType.user)
     async def account(self, ctx):
         author_id = str(ctx.author.id)
@@ -235,6 +259,7 @@ class game(commands.Cog):
                 money = json.load(f)
             money[author_id] = {}
             money[author_id]['money'] = 0
+            money[author_id]['work'] = 0
             with open(f'game/money.json', 'w') as s:
                 json.dump(money, s, indent=4)
             await ctx.send('계정이 없어서 계정을 생성하였습니다. 통장 잔고는 0원 입니다.')
@@ -242,22 +267,22 @@ class game(commands.Cog):
     @account.error
     async def account_error(self, ctx, error):
         if isinstance(error, discord.ext.commands.CommandOnCooldown):
-            await ctx.message.add_reaction('<:15s:752150489386450974>')
+            await ctx.message.add_reaction('<:.15s:752150489386450974>')
     
-    @commands.command(name="계좌번호확인", aliases=['계좌확인', '계좌'], help="현재시간을 알려줍니다")
+    @commands.command(name="계좌번호확인", aliases=['계좌확인', '계좌','rPwhk','rPwhkghkrdls','rPwhkqjsghghkrdls'], help="현재시간을 알려줍니다")
     @commands.cooldown(1, 2, commands.BucketType.user)
-    async def dadafasfafwscfasewsdcfsasc(self,ctx, user_name: discord.Member):
-        await ctx.send(user_name.id)
+    async def dadafasfafwscfasewsdcfsasc(self,ctx,*, user_name: discord.Member):
+        await ctx.send(f"{user_name.name}#{user_name.discriminator}님의 계좌번호는 `{user_name.id}` 입니다.")
     @dadafasfafwscfasewsdcfsasc.error
     async def dadafasfafwscfasewsdcfsasc_error(self, ctx, error):
         if isinstance(error, discord.ext.commands.CommandOnCooldown):
             await ctx.message.add_reaction('<:2s:752150489348571197>')
 
-    @commands.command(name="송금")
+    @commands.command(name="송금",aliases=['thdrma','ㄴ둥','send'])
     @commands.cooldown(1, 3600, commands.BucketType.user)
     async def sendmoney(self, ctx, 계좌번호, amount:int):
         sss = amount
-        amount = int(amount*0.8)
+        xx = int(amount*0.8)
         author_id = str(ctx.author.id)
         xaxa = int(amount*0.2)
         with open(f'game/money.json', 'r') as f:
@@ -270,9 +295,10 @@ class game(commands.Cog):
                 return
             try:
                 money[author_id]['money'] -= (sss + 1000)
-                money[계좌번호]['money'] += amount
+                money[계좌번호]['money'] += xx
             except KeyError:
                 await ctx.send('계좌번호가 존재하지 않습니다.')
+                return
             await ctx.send(f'정상적으로 송금했습니다. 수수료 {xaxa}')
             with open(f'game/money.json', 'w') as s:
                 json.dump(money, s, indent=4)
@@ -283,6 +309,7 @@ class game(commands.Cog):
                 money = json.load(f)
             money[author_id] = {}
             money[author_id]['money'] = 0
+            money[author_id]['work'] = 0
             with open(f'game/money.json', 'w') as s:
                 json.dump(money, s, indent=4)
             await ctx.send('계정이 없어서 계정을 생성하였습니다. 통장 잔고는 0원 입니다.')
@@ -290,9 +317,9 @@ class game(commands.Cog):
     @sendmoney.error
     async def sendmoney_error(self, ctx, error):
         if isinstance(error, discord.ext.commands.CommandOnCooldown):
-            await ctx.message.add_reaction('<:1h:752150489776390277>')
+            await ctx.message.add_reaction('<:.1h:752150489776390277>')
 
-    @commands.command(name="계정삭제")
+    @commands.command(name="계정삭제",aliases=['deleteaccount','rPwjdtkrwp'])
     @commands.cooldown(1, 600, commands.BucketType.user)
     async def deleteaccount(self, ctx):
         author_id = str(ctx.author.id)
@@ -309,6 +336,7 @@ class game(commands.Cog):
                 money = json.load(f)
             money[author_id] = {}
             money[author_id]['money'] = 0
+            money[author_id]['work'] = 0
             with open(f'game/money.json', 'w') as s:
                 json.dump(money, s, indent=4)
             await ctx.send('계정이 없어서 계정을 생성하였습니다. 통장 잔고는 0원 입니다.')
@@ -319,22 +347,30 @@ class game(commands.Cog):
         if isinstance(error, discord.ext.commands.CommandOnCooldown):
             await ctx.message.add_reaction('<:10min:752150489096781966>')
 
-    @commands.command()
-    async def 가위바위보(self, ctx):
+    @commands.command(name="가위바위보", aliases=['묵찌빠','anrWLQK','anrWlQk'])
+    @commands.cooldown(1, 20, commands.BucketType.user)
+    async def rpc(self, ctx):
         user_id = str(ctx.author.id)
+        user_name = str(ctx.author)
         with open("game/money.json", 'r') as f:
             user_data = json.load(f)  # 유저 데이터 불러오는 코드
-        await ctx.send("`가위, 바위, 보` 중에서 하나를 5초 안에 말해주세요!")
         try:
             a = user_data[user_id]
+            if 30000 > user_data[user_id]['money']:
+                await ctx.send('돈이 부족합니다.(요구하는액수 : 30000원)')
+                return
         except KeyError:
             await ctx.send('계정을 먼저 생성해주세요.')
             return
+        
+        await ctx.send("`가위, 바위, 보` 중에서 하나를 5초 안에 말해주세요!")
+        
 
         rpc = ['가위', '바위', '보']
+        rpc1 = ['묵', '찌', '빠']
 
         def check(m):
-            return m.content == "가위" or m.content == "바위" or m.content == "보"
+            return m.content == "가위" or m.content == "바위" or m.content == "보" or m.content == "묵" or m.content == "찌" or m.content == "빠"
 
         def game(A, B):
             if A not in rpc:
@@ -355,15 +391,20 @@ class game(commands.Cog):
         choice = random.choice(rpc)
         result = game(answer.content, choice)
         if result == 1:
-            await ctx.send(f"{ctx.author.mention}님이 이겼어요... ({answer.content}, {choice})\n`+100원`")
-            user_data[user_id]["money"] += 100
+            await ctx.send(f"{ctx.author.mention}님이 이겼어요... ({ctx.author.name}#{ctx.author.discriminator}님:{answer.content}, 봇:{choice})\n`+10000원`")
+            user_data[user_id]["money"] += 10000
         elif result == 3:
-            await ctx.send(f"제가 이겼어요! ({answer.content}, {choice})")
+            await ctx.send(f"제가 이겼어요! ({ctx.author.name}#{ctx.author.discriminator}님:{answer.content}, 봇:{choice}) `-30000원`")
+            user_data[user_id]["money"] -= 30000
         elif result == 2:
-            await ctx.send(f"비겼네요. ({answer.content}, {choice})\n`+50원`")
-            user_data[user_id]["money"] += 50
+            await ctx.send(f"비겼네요. ({ctx.author.name}#{ctx.author.discriminator}님:{answer.content}, 봇:{choice})\n`+5000원`")
+            user_data[user_id]["money"] += 5000
         with open("game/money.json", 'w') as f:
             json.dump(user_data, f, indent=4)
+    @rpc.error
+    async def rpc_error(self, ctx, error):
+        if isinstance(error, discord.ext.commands.CommandOnCooldown):
+            await ctx.message.add_reaction('<:20s:752150489583452211>')
 
 def setup(bot):
     bot.add_cog(game(bot))
