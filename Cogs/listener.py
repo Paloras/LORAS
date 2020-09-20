@@ -2,25 +2,12 @@
 #-*- coding: utf-8 -*-
 
 from discord.utils import get
-import youtube_dl
-from bs4 import BeautifulSoup
-import urllib
-import requests
-from urllib.request import urlopen, Request
-from urllib.request import URLError
-from urllib.request import HTTPError
-from urllib.parse import quote
-from urllib import parse
-import json
-import aiohttp
-import time
 import discord
 from discord.ext import commands
 import random
 import asyncio
 import re
 import ast
-import datetime
 from config import OWNERS
 
 
