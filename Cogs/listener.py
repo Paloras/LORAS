@@ -45,7 +45,7 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
-        cha = self.bot.get_channel(744483624534933534)  
+        cha = self.bot.get_channel(111111111111111111)  
         if isinstance(error, commands.MissingPermissions):
             await ctx.message.add_reaction('🚫')
             await ctx.send (f"당신이 필요한 권한을 가지고 있지 않습니다.\n필요한 권한: `{', '.join(error.missing_perms)}`", delete_after=7.0)
