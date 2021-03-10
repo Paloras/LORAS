@@ -10,15 +10,6 @@ async def req (url : str, header = None) :
          data = await r.json()
    return data
 
-async def post_guild_count(token, guild_count):
-    URL = 'https://api.koreanbots.cf/bots/servers'
-    headers = {"token":token,"content-type":"application/json"}
-    data = {'servers':guild_count}
-    async with aiohttp.ClientSession() as cs:
-        async with cs.post(URL, headers=headers, json=data) as r:
-            response = await r.json()
-            return response
-
 class UpdateGuild(commands.Cog, name='하트'):
 
     def __init__(self, bot):
